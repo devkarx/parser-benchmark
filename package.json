@@ -1,0 +1,21 @@
+{
+  "name": "parser-benchmark",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "benchmark": "tsx src/benchmark.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@rocket.chat/message-parser": "^0.31.34",
+    "@types/node": "^25.5.0",
+    "chevrotain": "^12.0.0",
+    "tinybench": "2.5.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  }
+}
