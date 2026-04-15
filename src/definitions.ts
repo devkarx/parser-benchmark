@@ -4,3 +4,7 @@ export type Italic = { type: 'ITALIC'; value: Array<Plain | UserMention | Channe
 export type InlineCode = { type: 'INLINE_CODE'; value: Plain };
 export type UserMention = { type: 'MENTION_USER'; value: Plain };
 export type ChannelMention = { type: 'MENTION_CHANNEL'; value: Plain };
+export interface Strike {
+  type: 'STRIKE';
+  value: Array<Plain | Bold | Italic | InlineCode | UserMention | ChannelMention>;
+}

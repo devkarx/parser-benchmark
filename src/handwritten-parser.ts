@@ -1,7 +1,7 @@
-import type { Bold, Plain, UserMention, ChannelMention, Italic, InlineCode } from './definitions';
+import type { Bold, Plain, UserMention, ChannelMention, Italic, InlineCode, Strike } from './definitions';
 
 /** Shared type for items that can appear inside inline markup (Bold, Italic) */
-type InlineContentItem = Bold['value'][number] | Italic['value'][number];
+type InlineContentItem = Bold['value'][number] | Italic['value'][number] | Strike['value'][number];
 
 /** Returns true if the character code represents a valid identifier character (a-z, A-Z, 0-9, dot) */
 function isIdentifierChar(c: number): boolean {
@@ -92,7 +92,7 @@ function parseInlineContent(input: string, pos: number, closingDelimiter: string
         }
 
         // Consume plain text until next special character
-        const [plainText, newPos3] = parsePlainText(input, pos, ['*', '_', '@', '#', '`']);
+        const [plainText, newPos3] = parsePlainText(input, pos, ['*', '_', '@', '#', '`', '~']);
         if (plainText !== null) {
             items.push(plainText);
             pos = newPos3;
@@ -153,6 +153,33 @@ export function parseItalic(input: string, pos: number): [Italic | null, number]
     pos += delimiter.length;
 
     return [{ type: 'ITALIC', value: items as Italic['value'] }, pos];
+}
+
+/**
+ * Parses strikethrough markup in the form ~text~ or ~~text~~.
+ * Returns the Strike AST node and the position after the closing delimiter,
+ * or [null, originalPos] if the input does not match.
+ */
+export function parseStrike(input: string, pos: number): [Strike | null, number] {
+    const originalPos = pos;
+
+    // Fast fail if it doesn't start with a tilde
+    if (input[pos] !== '~') return [null, pos];
+
+    // Determine delimiter: ~~ takes priority over ~
+    const delimiter = input[pos + 1] === '~' ? '~~' : '~';
+    pos += delimiter.length;
+
+    // Re-use your orchestrator to parse the inside content
+    const [items, newPos] = parseInlineContent(input, pos, delimiter);
+    pos = newPos;
+
+    // Safe backtracking: if the closing delimiter is missing, reset to originalPos
+    if (!input.startsWith(delimiter, pos)) return [null, originalPos];
+    pos += delimiter.length;
+
+    // Return the strict AST node
+    return [{ type: 'STRIKE', value: items as Strike['value'] }, pos];
 }
 
 /**
