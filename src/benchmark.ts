@@ -1,6 +1,6 @@
 import { Bench } from 'tinybench';
 import { parseBold, parseItalic, parseInlineCode } from './handwritten-parser.js';
-import { parseChevrotainBold } from './chevrotain-parser.js';
+import { parseChevrotain } from './chevrotain-parser.js';
 import { parsePeggy } from './peggy-parser.js';
 
 const inputs = [
@@ -61,7 +61,7 @@ bench
         });
     })
     .add('Chevrotain Parser', () => {
-        inputs.forEach(input => parseChevrotainBold(input));
+        inputs.forEach(input => parseChevrotain(input));
     })
     .add('PeggyJS Parser', () => {
         inputs.forEach(input => parsePeggy(input));
